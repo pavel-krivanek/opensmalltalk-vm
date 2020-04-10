@@ -7,7 +7,7 @@ Class {
 { #category : #tests }
 SlangTests >> testSimpleMethod [
 	| codeGenerator tMethod code |
-	codeGenerator := CCodeGenerator new.
+	codeGenerator := VMMakerCCodeGenerator new.
 	tMethod := codeGenerator compileToTMethodSelector: #extBBytecode in: StackInterpreter.
 	self assert: #(	#'['
 					byte #':=' self fetchByte #'.'

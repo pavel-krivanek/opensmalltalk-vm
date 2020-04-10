@@ -146,7 +146,7 @@ RBMessageNode >> asTranslatorNodeIn: aTMethod [
 					  and: [#('nil' true false) includes: args last statements first nameOrValue]]]).
 		 args := args first: usedSelector numArgs].
 	
-	((CCodeGenerator isVarargsSelector: usedSelector)
+	((VMMakerCCodeGenerator isVarargsSelector: usedSelector)
 	 and: [args last isCollection
 	 and: [args last isSequenceable]]) ifTrue:
 		[args := args allButLast, args last].

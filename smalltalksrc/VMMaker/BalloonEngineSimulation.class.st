@@ -412,7 +412,7 @@ BalloonEngineSimulation >> selectorsForIntMethods [
 	"Ensure that all methods that require int and unsigned int arithmetic are overridden."
 	| selectors cg |
 	selectors := OrderedCollection new.
-	cg := CCodeGenerator new.
+	cg := VMMakerCCodeGenerator new.
 	^(BalloonEnginePlugin organization listAtCategoryNamed: 'beziers-simple') select:
 		[:selector|
 		(BalloonEnginePlugin >> selector) pragmas anySatisfy:
@@ -548,7 +548,7 @@ BalloonEngineSimulation >> transformedSourceFor: m [
 	 and all references to #'unsigned int' variables into var asC_unsigned_int"
 	| tm rules cgen |
 	tm := m asTranslationMethodOfClass: TMethod.
-	tm recordDeclarationsIn: (cgen := CCodeGenerator new).
+	tm recordDeclarationsIn: (cgen := VMMakerCCodeGenerator new).
 	rules := RBParseTreeRewriter new.
 	#(#'int *' #'unsigned int *')
 		with: #(asC_int asC_unsigned_int)

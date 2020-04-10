@@ -1281,7 +1281,7 @@ VMMaker >> couldNotOpenFile: fileName [
 { #category : #initialize }
 VMMaker >> createCodeGenerator [
 "set up a CCodeGenerator for this VMMaker"
-	^CCodeGenerator new
+	^VMMakerCCodeGenerator new
 		vmMaker: self;
 		logger: logger;
 		options: optionsDictionary;
@@ -1290,7 +1290,7 @@ VMMaker >> createCodeGenerator [
 
 { #category : #initialize }
 VMMaker >> createCogitCodeGenerator [
-	^CCodeGenerator new
+	^VMMakerCCodeGenerator new
 		vmMaker: self;
 		logger: logger;
 		options: optionsDictionary;
@@ -1841,7 +1841,7 @@ VMMaker >> logGeneration [
 		[:generator|
 		 logger cr; nextPutAll: (generator selector copyReplaceAll: 'generate' with: '').
 		 interpreterClassName ifNotNil:
-			[logger space; nextPutAll: (CCodeGenerator shortMonticelloDescriptionForClass: (Smalltalk classNamed: interpreterClassName))].
+			[logger space; nextPutAll: (VMMakerCCodeGenerator shortMonticelloDescriptionForClass: (Smalltalk classNamed: interpreterClassName))].
 		 sourceDirName ifNotNil:
 			[logger nextPutAll: ' to '; nextPutAll: sourceDirName].
 		 logger cr; flush]
@@ -2222,7 +2222,7 @@ VMMaker >> storeExternalPluginList [
 			s space; nextPut: $\; cr; nextPutAll: cls moduleName].
 		s cr].
 	filePath := self makefileDirectory fullNameFor: self externalPluginListName.
-	(CCodeGenerator basicNew needToGenerateHeader: filePath file: filePath contents: contents) ifTrue:
+	(VMMakerCCodeGenerator basicNew needToGenerateHeader: filePath file: filePath contents: contents) ifTrue:
 		[[fileStream := VMMaker forceNewFileNamed: filePath] 
 			on: FileDoesNotExistException 
 			do:[^self couldNotOpenFile: filePath].
@@ -2244,7 +2244,7 @@ VMMaker >> storeInternalPluginList [
 			s space; nextPut: $\; cr; nextPutAll: cls moduleName].
 		s cr].
 	filePath := self makefileDirectory fullNameFor: self internalPluginListName.
-	(CCodeGenerator basicNew needToGenerateHeader: filePath file: filePath contents: contents) ifTrue:
+	(VMMakerCCodeGenerator basicNew needToGenerateHeader: filePath file: filePath contents: contents) ifTrue:
 		[[fileStream := VMMaker forceNewFileNamed: filePath] 
 			on: FileDoesNotExistException 
 			do:[^self couldNotOpenFile: filePath].

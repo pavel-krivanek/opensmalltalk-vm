@@ -471,7 +471,7 @@ SmartSyntaxPluginTMethod >> setSelector: sel definingClass: class args: argList 
 	static := self extractStaticDirective.
 	self extractSharedCase.
 	isPrimitive := false.  "set to true only if you find a primtive direction."
-	self recordDeclarationsIn: CCodeGenerator basicNew. "Just for conventionalTypeForType:"
+	self recordDeclarationsIn: VMMakerCCodeGenerator basicNew. "Just for conventionalTypeForType:"
 	self extractPrimitiveDirectives.
 
 ]

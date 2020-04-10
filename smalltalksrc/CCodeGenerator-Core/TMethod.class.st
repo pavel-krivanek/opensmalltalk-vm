@@ -384,10 +384,11 @@ TMethod >> comment: aComment [
 TMethod >> compileTimeOptionPragmas [
 	"Answer the (possibly empty) sequence of option: or notOption: pragmas
 	 whose arguments are values to be defined at compile time."
-	^self compiledMethod pragmas select:
-		[:pragma|
-		 (#option: == pragma keyword or: [#notOption: == pragma keyword])
-		 and: [VMBasicConstants defineAtCompileTime: (pragma argumentAt: 1)]]
+
+	^ self compiledMethod pragmas
+		select: [ :pragma | 
+			(#option: == pragma selector or: [ #notOption: == pragma selector ])
+				and: [ VMBasicConstants defineAtCompileTime: (pragma argumentAt: 1) ] ]
 ]
 
 { #category : #accessing }
@@ -847,12 +848,16 @@ TMethod >> extractDirective: theSelector valueBlock: aBlock default: defaultResu
 	 to the pragma node, or defaultResult if there is no matching pragma."
 
 	| result found newStatements |
-	(properties at: theSelector ifAbsent: []) ifNotNil:
-		[:pragma|
-		^aBlock value: (TSendNode new
-							setSelector: pragma keyword
-							receiver: (TVariableNode new setName: 'self')
-							arguments: (pragma arguments collect: [:const| TConstantNode new setValue: const]))].
+	(properties at: theSelector ifAbsent: [  ])
+		ifNotNil: [ :pragma | 
+			^ aBlock
+				value:
+					(TSendNode new
+						setSelector: pragma selector
+						receiver: (TVariableNode new setName: 'self')
+						arguments:
+							(pragma arguments
+								collect: [ :const | TConstantNode new setValue: const ])) ].
 	"Pre-pragma backward compatibility:
 	 Scan the top-level statements for a labelling directive of the form:
 
@@ -860,23 +865,20 @@ TMethod >> extractDirective: theSelector valueBlock: aBlock default: defaultResu
 
 	 and remove the directive from the method body if found.
 	 Answer the result of evaluating aBock with the send node,
-	  or defaultResult if there is no labelling directive."	result := defaultResult.
+	  or defaultResult if there is no labelling directive."
+	result := defaultResult.
 	found := false.
 	newStatements := OrderedCollection new: parseTree statements size.
-	parseTree statements do:
-		[ :stmt |
-		(stmt isSend
-		 and: [stmt selector = theSelector])
-			ifTrue:
-				[found := true.
-				 result := aBlock value: stmt]
-			ifFalse:
-				[newStatements add: stmt]].
-	^found
-		ifTrue:
-			[parseTree setStatements: newStatements asArray.
-			 result]
-		ifFalse: [defaultResult]
+	parseTree statements
+		do: [ :stmt | 
+			(stmt isSend and: [ stmt selector = theSelector ])
+				ifTrue: [ found := true.
+					result := aBlock value: stmt ]
+				ifFalse: [ newStatements add: stmt ] ].
+	^ found
+		ifTrue: [ parseTree setStatements: newStatements asArray.
+			result ]
+		ifFalse: [ defaultResult ]
 ]
 
 { #category : #transformations }

@@ -6,7 +6,7 @@ Class {
 
 { #category : #private }
 CCodeGeneratorTests >> cg [
-	^CCodeGenerator new
+	^VMMakerCCodeGenerator new
 ]
 
 { #category : #tests }

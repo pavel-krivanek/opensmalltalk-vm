@@ -825,7 +825,7 @@ Interpreter class >> macroBenchmark [  "Interpreter macroBenchmark"
 	fileName := 'benchmark2.out'.
 	Interpreter initialize.
 	ObjectMemory initialize.
-	cg := CCodeGenerator new initialize.
+	cg := VMMakerCCodeGenerator new initialize.
 	Interpreter initialize.
 	ObjectMemory initializeWithOptions: (Dictionary new
 											at: #BytesPerWord put: 4;

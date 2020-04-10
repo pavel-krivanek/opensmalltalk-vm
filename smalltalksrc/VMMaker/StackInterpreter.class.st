@@ -1922,7 +1922,7 @@ StackInterpreter class >> prepareToBeAddedToCodeGenerator: aCodeGen [
 { #category : #constants }
 StackInterpreter class >> primitiveAccessorDepthTable [
 	| cg |
-	cg := CCodeGenerator new.
+	cg := VMMakerCCodeGenerator new.
 	cg vmClass: StackInterpreter.
 	^self primitiveTable collect:
 		[:thing| | implementingClass method |
@@ -1938,7 +1938,7 @@ StackInterpreter class >> primitiveAccessorDepthTable [
 { #category : #constants }
 StackInterpreter class >> primitiveTable [
 	| cg |
-	cg := CCodeGenerator new.
+	cg := VMMakerCCodeGenerator new.
 	cg vmClass: self.
 	^PrimitiveTable collect:
 		[:thing|

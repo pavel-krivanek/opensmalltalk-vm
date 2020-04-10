@@ -530,7 +530,7 @@ InterpreterPlugin >> methodAndTypesOrNilForTranslatedPrimitiveSelector: selector
 	 Otherwise answer nil.  This caches the results of analysis in translatedMethodCache."
 	translatedMethodCache ifNil:
 		[translatedMethodCache := IdentityDictionary new.
-		 translatedMethodCache at: #CCodeGenerator put: CCodeGenerator new].
+		 translatedMethodCache at: #VMMakerCCodeGenerator put: VMMakerCCodeGenerator new].
 	^translatedMethodCache
 		at: selector
 		ifAbsentPut: [self tupleOrNilForTranslatedPrimitiveSelector: selector]
@@ -705,7 +705,7 @@ InterpreterPlugin >> tryToRunTranslatedPrimitive: method types: types subsidiari
 	| cg args result |
 	interpreterProxy methodArgumentCount ~= method numArgs ifTrue:
 		[^interpreterProxy primitiveFail].
-	cg := translatedMethodCache at: #CCodeGenerator.
+	cg := translatedMethodCache at: #VMMakerCCodeGenerator.
 	args := (1 to: method numArgs)
 				with: types
 				collect:
@@ -741,7 +741,7 @@ InterpreterPlugin >> tupleOrNilForTranslatedPrimitiveSelector: selector [
 							[:p|
 							(p keyword beginsWith: 'var:')
 							and: [argNames includes: p arguments first]].
-		cg := translatedMethodCache at: #CCodeGenerator.
+		cg := translatedMethodCache at: #VMMakerCCodeGenerator.
 		types := (1 to: method numArgs) collect:
 					[:i|
 					(argPragmas detect: [:p| p arguments first = (argNames at: i)] ifNone: [])

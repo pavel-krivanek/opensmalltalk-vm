@@ -18,7 +18,7 @@ ADPCMCodecPlugin class >> methodsToBePruned [
 ADPCMCodecPlugin class >> monticelloDescription [
 	"Override to include the ADPCMCodec class."
 	"self monticelloDescription"
-	^super monticelloDescription, '\' withCRs, (CCodeGenerator monticelloDescriptionFor: ADPCMCodec)
+	^super monticelloDescription, '\' withCRs, (VMMakerCCodeGenerator monticelloDescriptionFor: ADPCMCodec)
 ]
 
 { #category : #translation }
