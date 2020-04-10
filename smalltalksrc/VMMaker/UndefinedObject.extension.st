@@ -11,11 +11,6 @@ UndefinedObject >> asIntegerPtr [
 ]
 
 { #category : #'*VMMaker-interpreter simulator' }
-UndefinedObject >> asUnsignedInteger [
-	^self
-]
-
-{ #category : #'*VMMaker-interpreter simulator' }
 UndefinedObject >> asUnsignedIntegerPtr [
 	^self
 ]

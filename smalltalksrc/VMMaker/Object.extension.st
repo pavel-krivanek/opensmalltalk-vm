@@ -178,11 +178,6 @@ Object >> suppressFailureGuards: failureGuardFlag [
 ]
 
 { #category : #'*VMMaker-translation support' }
-Object >> touch: something [
-	"For translation only; eliminated by CCodeGenerator.  Used to squash unused varable warnings."
-]
-
-{ #category : #'*VMMaker-translation support' }
 Object >> var: varSymbol declareC: declString [
 	"For translation only; noop when running in Smalltalk."
 ]

@@ -10,6 +10,7 @@ BaselineOfVMMaker >> baseline: spec [
 	spec
 		for: #common
 		do: [
+			spec package: 'CCodeGenerator-Core'.
 			"Initial VMMaker package for handling Pharo 6" 
 			spec
 				package: 'VMMakerTests' with: [
@@ -34,7 +35,7 @@ BaselineOfVMMaker >> baseline: spec [
 			spec
 				package: 'Balloon-Engine-Pools';
 				package: 'BytecodeSets';
-				package: 'VMMaker' with: [ spec requires: #( 'VMMakerLoadingDependencies' 'Printf') ];
+				package: 'VMMaker' with: [ spec requires: #( 'CCodeGenerator-Core' 'VMMakerLoadingDependencies' 'Printf') ];
 				package: 'Cog';
 				package: 'CogTools';
 				package: 'ImageFormat'.
