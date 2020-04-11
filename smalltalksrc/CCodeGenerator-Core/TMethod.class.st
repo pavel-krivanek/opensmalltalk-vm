@@ -569,7 +569,7 @@ TMethod >> emitCFunctionPrototype: aStream generator: aCodeGen isPrototype: isPr
 									and: [returnType includesSubstring: (aCodeGen cFunctionNameFor: selector)]].
 	export 
 		ifTrue:
-			[aStream nextPutAll: 'EXPORT('; nextPutAll: returnType; nextPut: $)]
+			[aStream nextPutAll: 'EXPORT('; nextPutAll: self returnType; nextPut: $)]
 		ifFalse:
 			[self isStatic
 				ifTrue: [aStream nextPutAll: 'static ']
@@ -2605,7 +2605,7 @@ TMethod >> replaceSizeMessages [
 TMethod >> returnType [
 	"The type of the values returned by this method. This string will be used in the C declaration of this function."
 
-	^returnType
+	^returnType ifNil: #sqInt
 ]
 
 { #category : #accessing }
