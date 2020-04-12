@@ -49,6 +49,17 @@ Class {
 	#category : #'CCodeGenerator-Core-Translation to C'
 }
 
+{ #category : #utilities }
+CCodeGenerator class >> forceNewFileNamed: aFilename [
+	"Always output files in unix lf format.
+		A single format is friendlier to e.g. external version control systems.
+		The Microsoft and old MacOS classic C compilers all accept lf format files."
+
+	^(MultiByteFileStream forceNewFileNamed: aFilename)
+		lineEndConvention: #lf;
+		yourself
+]
+
 { #category : #'class initialization' }
 CCodeGenerator class >> initialize [
 	"CCodeGenerator initialize"
@@ -4451,25 +4462,10 @@ CCodeGenerator >> optionIsTrue: pragma in: aClass [
 	 conditional around its declaration and definition."
 	((vmClass ifNil: [VMBasicConstants]) defineAtCompileTime: key) ifTrue:
 		[^true].
-
-	"If the option is the name of a subclass of Cogit, include it if it inherits from the Cogit class."
-	(Smalltalk classNamed: key) ifNotNil:
-		[:optionClass|
-		 aClass cogitClass ifNotNil:
-			[:cogitClass|
-			 (optionClass includesBehavior: Cogit) ifTrue:
-				[^cogitClass includesBehavior: optionClass]].
-		 aClass objectMemoryClass ifNotNil:
-			[:objectMemoryClass|
-			 ((optionClass includesBehavior: ObjectMemory)
-			   or: [optionClass includesBehavior: SpurMemoryManager]) ifTrue:
-				[^objectMemoryClass includesBehavior: optionClass]]].
-	"Lookup options in options, class variables of the defining class, VMBasicConstants, the interpreterClass and the objectMemoryClass"
+	
 	{aClass initializationOptions.
 	  aClass.
-	  VMBasicConstants.
-	  aClass interpreterClass.
-	  aClass objectMemoryClass} do:
+	  VMBasicConstants } do:
 		[:scopeOrNil|
 		 scopeOrNil ifNotNil:
 			[:scope|
@@ -5272,7 +5268,7 @@ CCodeGenerator >> storeCodeOnFile: fileName doInlining: inlineFlag doAssertions:
 	"Store C code for this code base on the given file."
 
 	| stream |
-	stream := VMMaker forceNewFileNamed: fileName.
+	stream := self class forceNewFileNamed: fileName.
 	stream ifNil: [Error signal: 'Could not open C code file: ', fileName].
 	self emitCCodeOn: stream doInlining: inlineFlag doAssertions: assertionFlag.
 	stream close
