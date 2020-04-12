@@ -1,6 +1,13 @@
 Extension { #name : #CCGClass }
 
 { #category : #'*VMMaker' }
+CCGClass class >> cogMethodClass: options [
+	^(options at: #NewspeakVM ifAbsent: [false])
+		ifTrue: [NewspeakCogMethod]
+		ifFalse: [CogMethod]
+]
+
+{ #category : #'*VMMaker' }
 CCGClass >> doOrDefer: aBlock [
 	<doNotGenerate>
 	"Either evaluate aBlock immediately if in the uiProcess or defer aBlock as a UI message"

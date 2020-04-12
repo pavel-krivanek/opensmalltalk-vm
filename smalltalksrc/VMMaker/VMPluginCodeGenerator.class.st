@@ -3,7 +3,7 @@ I generate code that can be loaded dynamically from external libraries (e.g., DS
 "
 Class {
 	#name : #VMPluginCodeGenerator,
-	#superclass : #CCodeGenerator,
+	#superclass : #VMMakerCCodeGenerator,
 	#instVars : [
 		'pluginClass',
 		'pluginFunctionsUsed',
