@@ -1252,7 +1252,7 @@ CCodeGenerator >> emitCConstantsOn: aStream [
 	unused := constants keys asSet.
 	"Don't generate any defines for the externally defined constants,
 	 STACKVM, COGVM, COGMTVM et al, unless they're actually used."
-	(VMClass class>>#initializeMiscConstants) literalsDo:
+	(CCGClass class>>#initializeMiscConstants) literalsDo:
 		[:lit|
 		(lit isVariableBinding and: [lit key isString]) ifTrue:
 			[unused add: lit key]].
@@ -3662,15 +3662,15 @@ CCodeGenerator >> initializerForInstVar: varName in: aClass [
 { #category : #inlining }
 CCodeGenerator >> initializerForInstVar: varName inStartClass: aClass [
 	| allClasses sizeBefore |
-	(aClass inheritsFrom: VMClass) ifFalse:
+	(aClass inheritsFrom: CCGClass) ifFalse:
 		[^false].
-	allClasses := (aClass withAllSuperclasses copyUpTo: VMClass) asSet.
+	allClasses := (aClass withAllSuperclasses copyUpTo: CCGClass) asSet.
 	[sizeBefore := allClasses size.
 	 allClasses copy do:
 		[:class|
 		class ancilliaryClasses do:
 			[:ancilliary|
-			allClasses addAll: (ancilliary withAllSuperclasses copyUpTo: VMClass)]].
+			allClasses addAll: (ancilliary withAllSuperclasses copyUpTo: CCGClass)]].
 	 sizeBefore ~= allClasses size] whileTrue.
 	allClasses do:
 		[:class|

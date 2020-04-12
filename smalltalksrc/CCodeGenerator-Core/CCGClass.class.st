@@ -1,8 +1,5 @@
-"
-I am an abstract superclass for all classes in the VM that want to maintain a source timeStamp.  I am also the holder of the InitializationOptions class variable which holds options such as which JIT or which memory manager to use when creating or generating a VM.
-"
 Class {
-	#name : #VMClass,
+	#name : #CCGClass,
 	#superclass : #Object,
 	#classVars : [
 		'DefaultBase',
@@ -16,37 +13,37 @@ Class {
 	#classInstVars : [
 		'timeStamp'
 	],
-	#category : #'CCodeGenerator-Core-Translation to C'
+	#category : #'CCodeGenerator-Core'
 }
 
 { #category : #translation }
-VMClass class >> ancilliaryClasses [
+CCGClass class >> ancilliaryClasses [
 	"Answer any extra classes to be included in the translation."
 	^{}
 ]
 
 { #category : #translation }
-VMClass class >> apiExportHeaderName [
+CCGClass class >> apiExportHeaderName [
 	"VM classesd that want to generate an api export header override this."
 	^nil
 ]
 
 { #category : #'adding/removing methods' }
-VMClass class >> basicRemoveSelector: aSelector [
+CCGClass class >> basicRemoveSelector: aSelector [
 	"Override to update the timeStamp"
 	^(super basicRemoveSelector: aSelector) ifNotNil:
 		[:oldMethod| self touch. oldMethod]
 ]
 
 { #category : #translation }
-VMClass class >> cogMethodClass: options [
+CCGClass class >> cogMethodClass: options [
 	^(options at: #NewspeakVM ifAbsent: [false])
 		ifTrue: [NewspeakCogMethod]
 		ifFalse: [CogMethod]
 ]
 
 { #category : #'accessing class hierarchy' }
-VMClass class >> cogitClass [
+CCGClass class >> cogitClass [
 	"Answer the cogitClass in effect.  Ensure that StackInterpreter has a nil cogitClass."
 	(self isInterpreterClass and: [self hasCogit not]) ifTrue:
 		[^nil].
@@ -56,7 +53,7 @@ VMClass class >> cogitClass [
 ]
 
 { #category : #'accessing class hierarchy' }
-VMClass class >> coreInterpreterClass [
+CCGClass class >> coreInterpreterClass [
 	"While the interpreterClass/vmClass for translation may be
 	 a subclass that holds a few primitives we want the actual
 	 interpreter name at the head of the generated file."
@@ -67,7 +64,7 @@ VMClass class >> coreInterpreterClass [
 ]
 
 { #category : #translation }
-VMClass class >> declareC: arrayOfVariableNames as: aCType in: aCCodeGenerator [
+CCGClass class >> declareC: arrayOfVariableNames as: aCType in: aCCodeGenerator [
 	"Declare the variables in arrayOfVariableNames with the given type."
 
 	arrayOfVariableNames
@@ -75,7 +72,7 @@ VMClass class >> declareC: arrayOfVariableNames as: aCType in: aCCodeGenerator [
 ]
 
 { #category : #translation }
-VMClass class >> declareCAsOop: arrayOfVariableNames in: aCCodeGenerator [
+CCGClass class >> declareCAsOop: arrayOfVariableNames in: aCCodeGenerator [
 	"Declare the variables in arrayOfVariableNames with type representing position in object memory."
 
 	arrayOfVariableNames do:
@@ -83,7 +80,7 @@ VMClass class >> declareCAsOop: arrayOfVariableNames in: aCCodeGenerator [
 ]
 
 { #category : #translation }
-VMClass class >> declareCAsUSqLong: arrayOfVariableNames in: aCCodeGenerator [
+CCGClass class >> declareCAsUSqLong: arrayOfVariableNames in: aCCodeGenerator [
 	"Declare the variables in arrayOfVariableNames with type representing position in object memory."
 
 	arrayOfVariableNames do:
@@ -91,7 +88,7 @@ VMClass class >> declareCAsUSqLong: arrayOfVariableNames in: aCCodeGenerator [
 ]
 
 { #category : #translation }
-VMClass class >> declareCVarsIn: aCCodeGenerator [ 
+CCGClass class >> declareCVarsIn: aCCodeGenerator [ 
 	"Declare any additional variables and/or add type declarations for existing variables."
 	aCCodeGenerator
 		var: #expensiveAsserts
@@ -99,7 +96,7 @@ VMClass class >> declareCVarsIn: aCCodeGenerator [
 ]
 
 { #category : #translation }
-VMClass class >> declareInterpreterVersionIn: aCCodeGenerator defaultName: defaultName [
+CCGClass class >> declareInterpreterVersionIn: aCCodeGenerator defaultName: defaultName [
 	NewspeakVM ifTrue:
 		["Newspeak as of mid 2011 derives SystemScope systemName from the interpreterVersion
 		  (via system attribute 1004) by copying up to but not including the last space, provided the
@@ -121,7 +118,7 @@ VMClass class >> declareInterpreterVersionIn: aCCodeGenerator defaultName: defau
 ]
 
 { #category : #debugger }
-VMClass class >> defaultIntegerBaseInDebugger [
+CCGClass class >> defaultIntegerBaseInDebugger [
 	"DefaultBase := 16."
 	"DefaultBase := 10."
 	DefaultBase isNil ifTrue: [DefaultBase := 16].
@@ -129,13 +126,13 @@ VMClass class >> defaultIntegerBaseInDebugger [
 ]
 
 { #category : #'accessing class hierarchy' }
-VMClass class >> defaultObjectMemoryClass [
+CCGClass class >> defaultObjectMemoryClass [
 	"Default for all-in-one VMs where the interpreter inherits from the object memory."
 	^nil
 ]
 
 { #category : #'as yet unclassified' }
-VMClass class >> exportHeaders [
+CCGClass class >> exportHeaders [
 
 'sq.h' asFileReference writeStreamDo: [ :f |
 	f nextPutAll: 
@@ -268,28 +265,28 @@ extern void warningat(char *,int);
 ]
 
 { #category : #translation }
-VMClass class >> getVMMaker [
+CCGClass class >> getVMMaker [
 	^Notification new tag: #getVMMaker; signal
 ]
 
 { #category : #'accessing class hierarchy' }
-VMClass class >> hasCogit [
+CCGClass class >> hasCogit [
 	^false
 ]
 
 { #category : #translation }
-VMClass class >> implicitReturnTypeFor: aSelector [
+CCGClass class >> implicitReturnTypeFor: aSelector [
 	"Answer the return type for methods that don't have an explicit return."
 	^#sqInt
 ]
 
 { #category : #initialization }
-VMClass class >> initializationOptions [
+CCGClass class >> initializationOptions [
 	^InitializationOptions
 ]
 
 { #category : #initialization }
-VMClass class >> initialize [
+CCGClass class >> initialize [
 	InitializationOptions ifNil: [InitializationOptions := Dictionary new].
 	ExpensiveAsserts := false.
 	(Smalltalk classNamed: #Utilities) ifNotNil:
@@ -301,7 +298,7 @@ VMClass class >> initialize [
 ]
 
 { #category : #initialization }
-VMClass class >> initializeForPlugins: optionsDictionaryOrArray [
+CCGClass class >> initializeForPlugins: optionsDictionaryOrArray [
 	"Do a default initialization, suitable for generating plugin sources."
 	StackInterpreterSimulator
 		initializeWithOptions: optionsDictionaryOrArray
@@ -309,7 +306,7 @@ VMClass class >> initializeForPlugins: optionsDictionaryOrArray [
 ]
 
 { #category : #initialization }
-VMClass class >> initializeMiscConstants [
+CCGClass class >> initializeMiscConstants [
 	"Falsify the `what type of VM is this?' flags that are defined in the various interp.h files.
 	 Subclass implementations need to include a super initializeMiscConstants"
 
@@ -367,7 +364,7 @@ VMClass class >> initializeMiscConstants [
 ]
 
 { #category : #initialization }
-VMClass class >> initializePrimitiveErrorCodes [
+CCGClass class >> initializePrimitiveErrorCodes [
 	"Define the VM's primitive error codes.  N.B. these are
 	 replicated in platforms/Cross/vm/sqVirtualMachine.h."
 	"VMClass initializePrimitiveErrorCodes"
@@ -406,7 +403,7 @@ VMClass class >> initializePrimitiveErrorCodes [
 ]
 
 { #category : #initialization }
-VMClass class >> initializeWithOptions: optionsDictionaryOrArray [
+CCGClass class >> initializeWithOptions: optionsDictionaryOrArray [
 	"Initialize the receiver, typically initializing class variables. Initialize any class variables
 	 whose names occur in optionsDictionary with the corresponding values there-in."
 	InitializationOptions := optionsDictionaryOrArray isArray
@@ -417,84 +414,84 @@ VMClass class >> initializeWithOptions: optionsDictionaryOrArray [
 ]
 
 { #category : #'accessing class hierarchy' }
-VMClass class >> interpreterClass [
+CCGClass class >> interpreterClass [
 	^self isInterpreterClass ifTrue: [self]
 ]
 
 { #category : #accessing }
-VMClass class >> interpreterVersion [ 
+CCGClass class >> interpreterVersion [ 
 	^ self subclassResponsibility
 ]
 
 { #category : #translation }
-VMClass class >> isAcceptableAncilliaryClass: aClass [
+CCGClass class >> isAcceptableAncilliaryClass: aClass [
 	^true
 ]
 
 { #category : #translation }
-VMClass class >> isAccessor: aSelector [
+CCGClass class >> isAccessor: aSelector [
 	"Answer if aSelector is simply an accessor method for one of our fields.
 	 Answer false by default.  VMStructType classes redefine this appropriately."
 	^false
 ]
 
 { #category : #translation }
-VMClass class >> isCogitClass [
+CCGClass class >> isCogitClass [
 	"The various Cogit classes override this."
 	^false
 ]
 
 { #category : #translation }
-VMClass class >> isInterpreterClass [
+CCGClass class >> isInterpreterClass [
 	"The various Interpreter classes override this."
 	^false
 ]
 
 { #category : #translation }
-VMClass class >> isNonArgumentImplicitReceiverVariableName: aString [
+CCGClass class >> isNonArgumentImplicitReceiverVariableName: aString [
 	^false
 ]
 
 { #category : #translation }
-VMClass class >> isPluginClass [
+CCGClass class >> isPluginClass [
 	"InterpreterPlugin class override this."
 	^false
 ]
 
 { #category : #translation }
-VMClass class >> isStructClass [
+CCGClass class >> isStructClass [
 	"The various VMStructType classes override this."
 	^false
 ]
 
 { #category : #accessing }
-VMClass class >> memoryManagerVersion [ 
+CCGClass class >> memoryManagerVersion [ 
 	^ self subclassResponsibility
 ]
 
 { #category : #translation }
-VMClass class >> monticelloDescription [
+CCGClass class >> monticelloDescription [
 	"Answer the Monticello version of the packlage containing the receiver.
 	 This is a hook to allow subclasses to expand upon the default monticello description."
 	^CCodeGenerator monticelloDescriptionFor: self
 ]
 
 { #category : #translation }
-VMClass class >> mustBeGlobal: var [
+CCGClass class >> mustBeGlobal: var [
 	"Answer if a variable must be global and exported.  Used for inst vars that are accessed from VM support code."
 
 	^var = #expensiveAsserts
 ]
 
 { #category : #translation }
-VMClass class >> noteCompilationOf: aSelector meta: isMeta [
+CCGClass class >> noteCompilationOf: aSelector meta: isMeta [
 	"note the recompiliation by resetting the timeStamp "
 	timeStamp := Time totalSeconds.
 	^super noteCompilationOf: aSelector meta: isMeta
 ]
 
 { #category : #'accessing class hierarchy' }
-VMClass class >> objectMemoryClass [
+CCGClass class >> objectMemoryClass [
 	InitializationOptions ifNil:
 		[^self defaultObjectMemoryClass].
 	^Smalltalk at: (InitializationOptions
@@ -503,125 +500,18 @@ VMClass class >> objectMemoryClass [
 ]
 
 { #category : #'accessing class hierarchy' }
-VMClass class >> objectRepresentationClass [
+CCGClass class >> objectRepresentationClass [
 	^self objectMemoryClass objectRepresentationClass
 ]
 
-{ #category : #utilities }
-VMClass class >> openCogMultiWindowBrowser [
-	"Answer a new multi-window browser on the ObjectMemory classes, the Cog Interpreter classes, and the main JIT classes"
-	| b |
-	b := Browser open.
-	#(	ObjectMemory NewObjectMemory NewCoObjectMemory
-		InterpreterPrimitives StackInterpreter StackInterpreterPrimitives CoInterpreter CoInterpreterPrimitives CoInterpreterMT
-		Cogit SimpleStackBasedCogit StackToRegisterMappingCogit
-		VMStructType VMMaker CCodeGenerator TMethod)
-		do: [:className|
-			(Smalltalk classNamed: className) ifNotNil:
-				[:class| b selectCategoryForClass: class; selectClass: class]]
-		separatedBy:
-			[b multiWindowState addNewWindow].
-	b multiWindowState selectWindowIndex: 1
-]
-
-{ #category : #utilities }
-VMClass class >> openCogSpurMultiWindowBrowser [
-	"Answer a new multi-window browser on the ObjectMemory classes, the Cog Interpreter classes, and the main JIT classes"
-	| b |
-	b := Browser open.
-	#(	SpurMemoryManager Spur32BitMemoryManager Spur32BitCoMemoryManager
-		 Spur64BitMemoryManager Spur64BitCoMemoryManager SpurGenerationScavenger
-		InterpreterPrimitives StackInterpreter StackInterpreterPrimitives CoInterpreter CoInterpreterPrimitives CoInterpreterMT
-		Cogit SimpleStackBasedCogit StackToRegisterMappingCogit
-		CogObjectRepresentation CogObjectRepresentationForSpur
-		CogObjectRepresentationFor32BitSpur CogObjectRepresentationFor64BitSpur
-		VMStructType VMMaker CCodeGenerator TMethod)
-		do: [:className|
-			(Smalltalk classNamed: className) ifNotNil:
-				[:class| b selectCategoryForClass: class; selectClass: class]]
-		separatedBy:
-			[b multiWindowState addNewWindow].
-	b multiWindowState selectWindowIndex: 1
-]
-
-{ #category : #utilities }
-VMClass class >> openCogTestsMultiWindowBrowser [
-	"Answer a new multi-window browser on the test classes in VMMaker"
-	"self openCogTestsMultiWindowBrowser"
-	| testClasses b |
-	testClasses := (PackageInfo named: 'VMMaker') classes select: [:c| c inheritsFrom: TestCase].
-	testClasses removeAll: AbstractInstructionTests allSubclasses.
-	testClasses removeAll: (testClasses select: [:c| '*Plugin*' match: c name]).
-	b := Browser open.
-	testClasses do:
-		[:class| b selectCategoryForClass: class; selectClass: class]
-		separatedBy:
-			[b multiWindowState addNewWindow].
-	b multiWindowState selectWindowIndex: 1
-]
-
-{ #category : #utilities }
-VMClass class >> openCogitMultiWindowBrowser [
-	"Answer a new multi-window browser on the ObjectMemory classes, the Cog Interpreter classes, and the main JIT classes"
-	"self openCogitMultiWindowBrowser"
-	| b |
-	b := Browser open.
-	Cogit withAllSubclasses,
-	CogObjectRepresentation withAllSubclasses,
-	{CogMethodZone. CogRTLOpcodes },
-	(CogAbstractInstruction withAllSubclasses reject: [:c| c name endsWith: 'Tests']),
-	CogBytecodeFixup withAllSubclasses,
-	CogSimStackEntry withAllSubclasses,
-	{VMStructType. VMMaker. CCodeGenerator. TMethod}
-		do: [:class|
-			b selectCategoryForClass: class; selectClass: class]
-		separatedBy:
-			[b multiWindowState addNewWindow].
-	b multiWindowState selectWindowIndex: 1
-]
-
-{ #category : #utilities }
-VMClass class >> openObjectMemoriesInterpretersBrowser [
-	"Answer a new multi-window browser on the ObjectMemory classes and the Cog Interpreter classes"
-	| b |
-	b := Browser open.
-	#(	ObjectMemory NewObjectMemory NewCoObjectMemory
-		InterpreterPrimitives StackInterpreter StackInterpreterPrimitives
-		CoInterpreter CoInterpreterPrimitives CoInterpreterMT)
-		do: [:className|
-			(Smalltalk classNamed: className) ifNotNil:
-				[:class| b selectCategoryForClass: class; selectClass: class]]
-		separatedBy:
-			[b multiWindowState addNewWindow].
-	b multiWindowState selectWindowIndex: 1
-]
-
-{ #category : #utilities }
-VMClass class >> openSpurMultiWindowBrowser [
-	"Answer a new multi-window browser on the Spur classes, the Cog StackInterpreter classes, and the support classes"
-	| b |
-	b := Browser open.
-	#(	SpurMemoryManager Spur32BitMemoryManager Spur64BitMemoryManager
-		SpurGenerationScavenger SpurSegmentManager
-		Spur32BitMMLESimulator SpurGenerationScavengerSimulator
-		InterpreterPrimitives StackInterpreter StackInterpreterPrimitives
-		VMStructType VMMaker CCodeGenerator TMethod)
-		do: [:className|
-			(Smalltalk classNamed: className) ifNotNil:
-				[:class| b selectCategoryForClass: class; selectClass: class]]
-		separatedBy:
-			[b multiWindowState addNewWindow].
-	b multiWindowState selectWindowIndex: 1
-]
-
 { #category : #translation }
-VMClass class >> prepareToBeAddedToCodeGenerator: aCCodeGenerator [ 
+CCGClass class >> prepareToBeAddedToCodeGenerator: aCCodeGenerator [ 
 	"Hook for translation.  e.g. allows a subclass to override its
 	 superclass's methods by deleting them before it adds its own."
 ]
 
 { #category : #translation }
-VMClass class >> requiredMethodNames: options [
+CCGClass class >> requiredMethodNames: options [
 	"Answer a list of method names that should be retained for export or other
 	 support reasons.  These are typically entry-points that unless explicitly noted
 	 will be deleted by the code generator since it will assume these are not used."
@@ -629,7 +519,7 @@ VMClass class >> requiredMethodNames: options [
 ]
 
 { #category : #translation }
-VMClass class >> shouldGenerateDeadCode [
+CCGClass class >> shouldGenerateDeadCode [
 	"Answer if the code generator should generate dead code, e.g. in false ifTrue: [dead] ifFalse: [live].
 	 This *may* be useful in debugging (see CCodeGenerator>>nilOrBooleanConstantReceiverOf: et al).
 	 But by default we answer false."
@@ -638,13 +528,13 @@ VMClass class >> shouldGenerateDeadCode [
 ]
 
 { #category : #translation }
-VMClass class >> shouldGenerateTypedefFor: aStructClass [
+CCGClass class >> shouldGenerateTypedefFor: aStructClass [
 	"Hack to work-around multiple definitions.  Sometimes a type has been defined in an include."
 	^aStructClass ~~ VMCallbackContext
 ]
 
 { #category : #translation }
-VMClass class >> shouldIncludeMethodForSelector: selector [
+CCGClass class >> shouldIncludeMethodForSelector: selector [
 	"Answer whether a primitive method should be translated.  Emit a warning to the transcript if the method doesn't exist."
 	^(self whichClassIncludesSelector: selector)
 		ifNotNil:
@@ -665,29 +555,29 @@ VMClass class >> shouldIncludeMethodForSelector: selector [
 ]
 
 { #category : #simulation }
-VMClass class >> simulatorClass [
+CCGClass class >> simulatorClass [
 	"For running from Smalltalk - answer a class that can be used to simulate the receiver."
 
 	^self
 ]
 
 { #category : #translation }
-VMClass class >> specialValueForConstant: constantName default: defaultValue [
+CCGClass class >> specialValueForConstant: constantName default: defaultValue [
 	^nil
 ]
 
 { #category : #translation }
-VMClass class >> staticallyResolvePolymorphicSelector: aSelectorSymbol [
+CCGClass class >> staticallyResolvePolymorphicSelector: aSelectorSymbol [
 	^((self name select: [:ea| ea isUppercase]), '_', aSelectorSymbol) asSymbol
 ]
 
 { #category : #translation }
-VMClass class >> timeStamp [
+CCGClass class >> timeStamp [
 	^timeStamp ifNil:[0]
 ]
 
 { #category : #translation }
-VMClass class >> touch [
+CCGClass class >> touch [
 	"Reset the timeStamp"
 	"Smalltalk allClasses select:
 		[:c| (c category includesSubString: 'VMMaker-JIT') ifTrue: [c touch]]"
@@ -696,7 +586,7 @@ VMClass class >> touch [
 ]
 
 { #category : #translation }
-VMClass class >> translationClass [
+CCGClass class >> translationClass [
 	"Return the class to use as the interpreterCLass when translating.  For the all-in-one
 	 VMs that inherit from ObjectMemory this is the receiver.  But for the separate VMs
 	 where most primitives are in a subclass it will be the subclass with the primitives."
@@ -704,13 +594,13 @@ VMClass class >> translationClass [
 ]
 
 { #category : #translation }
-VMClass class >> typeForSelf [
+CCGClass class >> typeForSelf [
 	"Answer the type to give self if appropriate, or nil if not."
 	^nil
 ]
 
 { #category : #translation }
-VMClass class >> writeVMHeaderTo: aStream bytesPerWord: bytesPerWord generator: aCCodeGenerator [
+CCGClass class >> writeVMHeaderTo: aStream bytesPerWord: bytesPerWord generator: aCCodeGenerator [
 	"Generate the contents of interp.h on aStream.  Specific Interpreter subclasses
 	 override to add more stuff."
 	aCCodeGenerator
@@ -742,14 +632,14 @@ VMClass class >> writeVMHeaderTo: aStream bytesPerWord: bytesPerWord generator: 
 ]
 
 { #category : #'translation support' }
-VMClass >> addressOf: anObject [
+CCGClass >> addressOf: anObject [
 	<doNotGenerate>
 	"Translates into &anObject in C."
 	^anObject
 ]
 
 { #category : #'translation support' }
-VMClass >> addressOf: anObject put: aBlock [
+CCGClass >> addressOf: anObject put: aBlock [
 	<doNotGenerate>
 	"Simulate a C pointer.  Translates into &anObject in C. Provides something
 	 that evaluates aBlock with the new value in response to at:put:"
@@ -762,20 +652,20 @@ VMClass >> addressOf: anObject put: aBlock [
 ]
 
 { #category : #'C library simulation' }
-VMClass >> alloca: size [
+CCGClass >> alloca: size [
 	"Simulation of alloca(3)"
 	<doNotGenerate>
 	^CArrayAccessor on: (ByteArray new: size)
 ]
 
 { #category : #'C library extensions' }
-VMClass >> alloca: numElements type: elementType [
+CCGClass >> alloca: numElements type: elementType [
 	<cmacro: '(numElements, elementType) alloca((numElements)*sizeof(elementType))'>
 	^CArrayAccessor on: ((1 to: numElements) collect: [:ign| elementType new])
 ]
 
 { #category : #'translation support' }
-VMClass >> asAddress: address put: aBlock [
+CCGClass >> asAddress: address put: aBlock [
 	<doNotGenerate>
 	"Simulate a C pointer.  Translates into address in C. Provides something
 	 that evaluates aBlock with the new value in response to at:put:"
@@ -786,7 +676,7 @@ VMClass >> asAddress: address put: aBlock [
 ]
 
 { #category : #'C library extensions' }
-VMClass >> asByteArray: aStringOrStringIndex [
+CCGClass >> asByteArray: aStringOrStringIndex [
 	"aStringOrStringIndex is either a string or an address in the heap.
 	 Create a ByteArray of the requested length form the bytes in the
 	 heap starting at stringIndex."
@@ -799,7 +689,7 @@ VMClass >> asByteArray: aStringOrStringIndex [
 ]
 
 { #category : #'C library extensions' }
-VMClass >> asByteArray: baIndex size: baSize [
+CCGClass >> asByteArray: baIndex size: baSize [
 	"baIndex is an address in the heap.  Create a ByteArray of the requested length
 	form the bytes in the heap starting at baIndex."
 	<doNotGenerate>
@@ -807,7 +697,7 @@ VMClass >> asByteArray: baIndex size: baSize [
 ]
 
 { #category : #'C library extensions' }
-VMClass >> asString: aStringOrStringIndex [
+CCGClass >> asString: aStringOrStringIndex [
 	"aStringOrStringIndex is either a string or an address in the heap.
 	 Create a String of the requested length form the bytes in the
 	 heap starting at stringIndex."
@@ -820,7 +710,7 @@ VMClass >> asString: aStringOrStringIndex [
 ]
 
 { #category : #'C library extensions' }
-VMClass >> asString: stringIndex size: stringSize [
+CCGClass >> asString: stringIndex size: stringSize [
 	"stringIndex is an address in the heap.  Create a String of the requested length
 	form the bytes in the heap starting at stringIndex."
 	<doNotGenerate>
@@ -828,13 +718,13 @@ VMClass >> asString: stringIndex size: stringSize [
 ]
 
 { #category : #'debug support' }
-VMClass >> assert: aBooleanExpression l: linenum [
+CCGClass >> assert: aBooleanExpression l: linenum [
 	<doNotGenerate>
 	^self assert: aBooleanExpression
 ]
 
 { #category : #'debug support' }
-VMClass >> asserta: aBooleanExpression [
+CCGClass >> asserta: aBooleanExpression [
 	<doNotGenerate>
 	| result |
 	(result := aBooleanExpression value) ifFalse:
@@ -843,13 +733,13 @@ VMClass >> asserta: aBooleanExpression [
 ]
 
 { #category : #'debug support' }
-VMClass >> asserta: aBooleanExpression l: linenum [
+CCGClass >> asserta: aBooleanExpression l: linenum [
 	<doNotGenerate>
 	^self asserta: aBooleanExpression
 ]
 
 { #category : #'translation support' }
-VMClass >> cCode: codeString [
+CCGClass >> cCode: codeString [
 	"Support for Smalltalk-to-C translation.
 	 For translation only; noop when running in Smalltalk.
 	 The argument is output literally when generating C code."
@@ -857,7 +747,7 @@ VMClass >> cCode: codeString [
 ]
 
 { #category : #'translation support' }
-VMClass >> cCode: codeStringOrBlock inSmalltalk: aBlock [
+CCGClass >> cCode: codeStringOrBlock inSmalltalk: aBlock [
 	"Support for Smalltalk-to-C translation. The first argument is output when generating C code.
 	  But if this code is being simulated in Smalltalk, answer the result of evaluating the given block.
 	  If the first argument is a string it is output literally, and if it is a block it is translated.
@@ -868,7 +758,7 @@ VMClass >> cCode: codeStringOrBlock inSmalltalk: aBlock [
 ]
 
 { #category : #'memory access' }
-VMClass >> cCoerce: value to: cTypeString [
+CCGClass >> cCoerce: value to: cTypeString [
 	"Type coercion. For translation a cast will be emmitted. When running in Smalltalk
 	  answer a suitable wrapper for correct indexing."
 	<doNotGenerate>
@@ -878,13 +768,13 @@ VMClass >> cCoerce: value to: cTypeString [
 ]
 
 { #category : #'translation support' }
-VMClass >> cPreprocessorDirective: codeString [
+CCGClass >> cPreprocessorDirective: codeString [
 	"For translation only; noop when running in Smalltalk."
 	<doNotGenerate>
 ]
 
 { #category : #'translation support' }
-VMClass >> cppIf: conditionBlockOrValue ifTrue: trueExpressionOrBlock [
+CCGClass >> cppIf: conditionBlockOrValue ifTrue: trueExpressionOrBlock [
 	"When translated, produces #if (condition) #else #endif CPP directives.
 	 Example usage:
 
@@ -896,7 +786,7 @@ VMClass >> cppIf: conditionBlockOrValue ifTrue: trueExpressionOrBlock [
 ]
 
 { #category : #'translation support' }
-VMClass >> cppIf: conditionBlockOrSymbolValue ifTrue: trueExpressionOrBlock ifFalse: falseExpressionOrBlockOrNil [
+CCGClass >> cppIf: conditionBlockOrSymbolValue ifTrue: trueExpressionOrBlock ifFalse: falseExpressionOrBlockOrNil [
 	"When translated, produces #if (condition) #else #endif CPP directives.
 	 Example usage:
 
@@ -926,22 +816,13 @@ VMClass >> cppIf: conditionBlockOrSymbolValue ifTrue: trueExpressionOrBlock ifFa
 ]
 
 { #category : #'simulation support' }
-VMClass >> deny: aBooleanOrBlock [
+CCGClass >> deny: aBooleanOrBlock [
 	<doNotGenerate>
 	aBooleanOrBlock value ifTrue: [AssertionFailure signal: 'Assertion failed']
 ]
 
-{ #category : #'simulation support' }
-VMClass >> doOrDefer: aBlock [
-	<doNotGenerate>
-	"Either evaluate aBlock immediately if in the uiProcess or defer aBlock as a UI message"
-	Processor activeProcess == self uiProcess
-		ifTrue: [aBlock value]
-		ifFalse: [WorldState addDeferredUIMessage: aBlock]
-]
-
 { #category : #'debug support' }
-VMClass >> eassert: aBooleanExpressionOrBlock [
+CCGClass >> eassert: aBooleanExpressionOrBlock [
 	"This is for expensive asserts that we're only interested in checking in extremis.
 	 For example now that Spur objStacks are debugged there's no benefit to
 	 evaluating isValidObjStack: throughout the mark loop because its damn slow."
@@ -952,7 +833,7 @@ VMClass >> eassert: aBooleanExpressionOrBlock [
 ]
 
 { #category : #'printf logging' }
-VMClass >> f: logFilename open: mode [
+CCGClass >> f: logFilename open: mode [
 	"Simulate a FILE stream by answering a transcript.
 	 Can be used with the f:printf: method."
 	<doNotGenerate>
@@ -964,7 +845,7 @@ VMClass >> f: logFilename open: mode [
 ]
 
 { #category : #'memory access' }
-VMClass >> fetchSingleFloatAtPointer: pointer into: aFloat [
+CCGClass >> fetchSingleFloatAtPointer: pointer into: aFloat [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and aFloat is a 32-bit single precision float."
 	<doNotGenerate>
@@ -973,25 +854,25 @@ VMClass >> fetchSingleFloatAtPointer: pointer into: aFloat [
 ]
 
 { #category : #'memory access' }
-VMClass >> floatAtPointer: pointer [
+CCGClass >> floatAtPointer: pointer [
 	<doNotGenerate>
 	self halt.
 ]
 
 { #category : #'memory access' }
-VMClass >> floatAtPointer: pointer put: value [
+CCGClass >> floatAtPointer: pointer put: value [
 	<doNotGenerate>
 	self halt.
 ]
 
 { #category : #'C library simulation' }
-VMClass >> free: pointer [
+CCGClass >> free: pointer [
 	<doNotGenerate>
 	"Do nothing"
 ]
 
 { #category : #'memory access' }
-VMClass >> int16AtPointer: pointer [
+CCGClass >> int16AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1000,7 +881,7 @@ VMClass >> int16AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> int16AtPointer: pointer put: value [
+CCGClass >> int16AtPointer: pointer put: value [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1009,7 +890,7 @@ VMClass >> int16AtPointer: pointer put: value [
 ]
 
 { #category : #'memory access' }
-VMClass >> int32AtPointer: pointer [
+CCGClass >> int32AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 32 bit integer."
 	<doNotGenerate>
@@ -1018,7 +899,7 @@ VMClass >> int32AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> int32AtPointer: pointer put: value [
+CCGClass >> int32AtPointer: pointer put: value [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 32 bit integer."
 	<doNotGenerate>
@@ -1027,7 +908,7 @@ VMClass >> int32AtPointer: pointer put: value [
 ]
 
 { #category : #'memory access' }
-VMClass >> int64AtPointer: pointer [
+CCGClass >> int64AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is the width of a machine word."
 	<doNotGenerate>
@@ -1036,7 +917,7 @@ VMClass >> int64AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> int64AtPointer: pointer put: longValue [
+CCGClass >> int64AtPointer: pointer put: longValue [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and longValue is the width of a machine word."
 	<doNotGenerate>
@@ -1045,7 +926,7 @@ VMClass >> int64AtPointer: pointer put: longValue [
 ]
 
 { #category : #'memory access' }
-VMClass >> int8AtPointer: pointer [
+CCGClass >> int8AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1054,7 +935,7 @@ VMClass >> int8AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> int8AtPointer: pointer put: value [
+CCGClass >> int8AtPointer: pointer put: value [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1063,19 +944,19 @@ VMClass >> int8AtPointer: pointer put: value [
 ]
 
 { #category : #testing }
-VMClass >> isCurrentImageFacade [
+CCGClass >> isCurrentImageFacade [
 	^false
 ]
 
 { #category : #'plugin support' }
-VMClass >> isInterpreterProxy [
+CCGClass >> isInterpreterProxy [
 	<doNotGenerate>
 	"Return false since I am a real Interpreter simulation"
 	^false
 ]
 
 { #category : #'hack compatibility' }
-VMClass >> localNameFor: aString [
+CCGClass >> localNameFor: aString [
 	<doNotGenerate>
 	^(Smalltalk classNamed: #FileSystem)
 		ifNotNil: [:fs| (fs disk pathFromString: aString) basename]
@@ -1083,7 +964,7 @@ VMClass >> localNameFor: aString [
 ]
 
 { #category : #'memory access' }
-VMClass >> long64AtPointer: pointer [
+CCGClass >> long64AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is the width of a machine word."
 	<doNotGenerate>
@@ -1092,7 +973,7 @@ VMClass >> long64AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> long64AtPointer: pointer put: longValue [
+CCGClass >> long64AtPointer: pointer put: longValue [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and longValue is the width of a machine word."
 	<doNotGenerate>
@@ -1101,7 +982,7 @@ VMClass >> long64AtPointer: pointer put: longValue [
 ]
 
 { #category : #'memory access' }
-VMClass >> longAtPointer: pointer [
+CCGClass >> longAtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is the width of a machine word."
 	<doNotGenerate>
@@ -1110,7 +991,7 @@ VMClass >> longAtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> longAtPointer: pointer put: longValue [
+CCGClass >> longAtPointer: pointer put: longValue [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and longValue is the width of a machine word."
 	<doNotGenerate>
@@ -1119,20 +1000,20 @@ VMClass >> longAtPointer: pointer put: longValue [
 ]
 
 { #category : #'simulation support' }
-VMClass >> majorVersion [
+CCGClass >> majorVersion [
 	"This is implemented in sqVirtualMachine.c, so this form is for simulation only."
 	<doNotGenerate>
 	^self class vmProxyMajorVersion
 ]
 
 { #category : #'C library simulation' }
-VMClass >> malloc: size [
+CCGClass >> malloc: size [
 	<doNotGenerate>
-	^CArrayAccessor on: (ByteArray new: size)
+	^ByteArray new: size
 ]
 
 { #category : #'C library simulation' }
-VMClass >> memcpy: dest _: src _: bytes [
+CCGClass >> memcpy: dest _: src _: bytes [
 	<doNotGenerate>
 	"implementation of memcpy(3). N.B. If ranges overlap, must use memmove."
 	| getBlock setBlock source destination |
@@ -1182,7 +1063,7 @@ VMClass >> memcpy: dest _: src _: bytes [
 ]
 
 { #category : #'C library simulation' }
-VMClass >> memmove: destAddress _: sourceAddress _: bytes [
+CCGClass >> memmove: destAddress _: sourceAddress _: bytes [
 	<doNotGenerate>
 	| dst src  |
 	dst := destAddress asInteger.
@@ -1199,26 +1080,26 @@ VMClass >> memmove: destAddress _: sourceAddress _: bytes [
 ]
 
 { #category : #'simulation support' }
-VMClass >> minorVersion [
+CCGClass >> minorVersion [
 	"This is implemented in sqVirtualMachine.c, so this form is for simulation only."
 	<doNotGenerate>
 	^self class vmProxyMinorVersion
 ]
 
 { #category : #'translation support' }
-VMClass >> numElementsIn: anArray [
+CCGClass >> numElementsIn: anArray [
 	<cmacro: '(anArray) (sizeof(anArray)/sizeof(anArray[0]))'>
 	^anArray size
 ]
 
 { #category : #accessing }
-VMClass >> objectRepresentationClass [
+CCGClass >> objectRepresentationClass [
 	<doNotGenerate>
 	^self class objectRepresentationClass
 ]
 
 { #category : #'oop comparison' }
-VMClass >> oop: anOop isGreaterThan: otherOop [
+CCGClass >> oop: anOop isGreaterThan: otherOop [
 	"Compare two oop values, treating them as object memory locations; i.e. use unsigned comparisons.
 	 Use a macro, instead of #cCoerce:to: to provide fast simulation and inline code in conditionals,
 	 since the inliner doesn't inline in condtionals."
@@ -1227,7 +1108,7 @@ VMClass >> oop: anOop isGreaterThan: otherOop [
 ]
 
 { #category : #'oop comparison' }
-VMClass >> oop: anOop isGreaterThan: baseOop andLessThan: limitOop [
+CCGClass >> oop: anOop isGreaterThan: baseOop andLessThan: limitOop [
 	"Compare two oop values, treating them as object memory locations; i.e. use unsigned comparisons.
 	 Use a macro, instead of #cCoerce:to: to provide fast simulation and inline code in conditionals,
 	 since the inliner doesn't inline in condtionals."
@@ -1236,7 +1117,7 @@ VMClass >> oop: anOop isGreaterThan: baseOop andLessThan: limitOop [
 ]
 
 { #category : #'oop comparison' }
-VMClass >> oop: anOop isGreaterThanOrEqualTo: otherOop [
+CCGClass >> oop: anOop isGreaterThanOrEqualTo: otherOop [
 	"Compare two oop values, treating them as object memory locations; i.e. use unsigned comparisons.
 	 Use a macro, instead of #cCoerce:to: to provide fast simulation and inline code in conditionals,
 	 since the inliner doesn't inline in condtionals."
@@ -1245,7 +1126,7 @@ VMClass >> oop: anOop isGreaterThanOrEqualTo: otherOop [
 ]
 
 { #category : #'oop comparison' }
-VMClass >> oop: anOop isGreaterThanOrEqualTo: baseOop andLessThan: limitOop [
+CCGClass >> oop: anOop isGreaterThanOrEqualTo: baseOop andLessThan: limitOop [
 	"Compare two oop values, treating them as object memory locations; i.e. use unsigned comparisons.
 	 Use a macro, instead of #cCoerce:to: to provide fast simulation and inline code in conditionals,
 	 since the inliner doesn't inline in condtionals."
@@ -1254,7 +1135,7 @@ VMClass >> oop: anOop isGreaterThanOrEqualTo: baseOop andLessThan: limitOop [
 ]
 
 { #category : #'oop comparison' }
-VMClass >> oop: anOop isGreaterThanOrEqualTo: baseOop andLessThanOrEqualTo: limitOop [
+CCGClass >> oop: anOop isGreaterThanOrEqualTo: baseOop andLessThanOrEqualTo: limitOop [
 	"Compare two oop values, treating them as object memory locations; i.e. use unsigned comparisons.
 	 Use a macro, instead of #cCoerce:to: to provide fast simulation and inline code in conditionals,
 	 since the inliner doesn't inline in condtionals."
@@ -1263,7 +1144,7 @@ VMClass >> oop: anOop isGreaterThanOrEqualTo: baseOop andLessThanOrEqualTo: limi
 ]
 
 { #category : #'oop comparison' }
-VMClass >> oop: anOop isLessThan: otherOop [
+CCGClass >> oop: anOop isLessThan: otherOop [
 	"Compare two oop values, treating them as object memory locations; i.e. use unsigned comparisons.
 	 Use a macro, instead of #cCoerce:to: to provide fast simulation and inline code in conditionals,
 	 since the inliner doesn't inline in condtionals."
@@ -1272,7 +1153,7 @@ VMClass >> oop: anOop isLessThan: otherOop [
 ]
 
 { #category : #'oop comparison' }
-VMClass >> oop: anOop isLessThanOrEqualTo: otherOop [
+CCGClass >> oop: anOop isLessThanOrEqualTo: otherOop [
 	"Compare two oop values, treating them as object memory locations; i.e. use unsigned comparisons.
 	 Use a macro, instead of #cCoerce:to: to provide fast simulation and inline code in conditionals,
 	 since the inliner doesn't inline in condtionals."
@@ -1281,7 +1162,7 @@ VMClass >> oop: anOop isLessThanOrEqualTo: otherOop [
 ]
 
 { #category : #'memory access' }
-VMClass >> oopForPointer: pointerOrSurrogate [
+CCGClass >> oopForPointer: pointerOrSurrogate [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 oop is the width of a machine word, and pointer is a raw address."
 	<doNotGenerate>
@@ -1289,7 +1170,7 @@ VMClass >> oopForPointer: pointerOrSurrogate [
 ]
 
 { #category : #'memory access' }
-VMClass >> pointerAtPointer: pointer [
+CCGClass >> pointerAtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is the width of a machine word."
 	<doNotGenerate>
@@ -1298,7 +1179,7 @@ VMClass >> pointerAtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> pointerAtPointer: pointer put: value [
+CCGClass >> pointerAtPointer: pointer put: value [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is the width of a machine word."
 	<doNotGenerate>
@@ -1307,7 +1188,7 @@ VMClass >> pointerAtPointer: pointer put: value [
 ]
 
 { #category : #'translation support' }
-VMClass >> pointerForOop: oop [
+CCGClass >> pointerForOop: oop [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 oop is the width of a machine word, and pointer is a raw address."
 	<doNotGenerate>
@@ -1316,7 +1197,7 @@ VMClass >> pointerForOop: oop [
 ]
 
 { #category : #'simulation support' }
-VMClass >> promptHex: string [
+CCGClass >> promptHex: string [
 	<doNotGenerate>
 	| s |
 	s := UIManager default request: string, ' (hex)'.
@@ -1334,7 +1215,7 @@ VMClass >> promptHex: string [
 ]
 
 { #category : #'simulation support' }
-VMClass >> promptNum: string [
+CCGClass >> promptNum: string [
 	<doNotGenerate>
 	| s |
 	s := UIManager default request: string, ' (dec)'.
@@ -1344,7 +1225,7 @@ VMClass >> promptNum: string [
 ]
 
 { #category : #arithmetic }
-VMClass >> safe: signedInteger mod: positiveModulus [
+CCGClass >> safe: signedInteger mod: positiveModulus [
 	<inline>
 	| remainder |
 	^(remainder := signedInteger \\ positiveModulus) < 0
@@ -1353,19 +1234,19 @@ VMClass >> safe: signedInteger mod: positiveModulus [
 ]
 
 { #category : #'memory access' }
-VMClass >> singleFloatAtPointer: pointer [
+CCGClass >> singleFloatAtPointer: pointer [
 	<doNotGenerate>
 	self halt.
 ]
 
 { #category : #'memory access' }
-VMClass >> singleFloatAtPointer: pointer put: value [
+CCGClass >> singleFloatAtPointer: pointer put: value [
 	<doNotGenerate>
 	self halt.
 ]
 
 { #category : #'translation support' }
-VMClass >> sizeof: objectSymbolOrClass [
+CCGClass >> sizeof: objectSymbolOrClass [
 	<doNotGenerate>
 	| index |
 	objectSymbolOrClass isInteger ifTrue:
@@ -1394,13 +1275,13 @@ VMClass >> sizeof: objectSymbolOrClass [
 ]
 
 { #category : #'simulation support' }
-VMClass >> sqLowLevelMFence [
+CCGClass >> sqLowLevelMFence [
 	<doNotGenerate>
 	"A no-op in the simulator"
 ]
 
 { #category : #'memory access' }
-VMClass >> storeFloatAtPointer: pointer from: aFloat [
+CCGClass >> storeFloatAtPointer: pointer from: aFloat [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and aFloat is a 64-bit double precision float."
 	<doNotGenerate>
@@ -1409,7 +1290,7 @@ VMClass >> storeFloatAtPointer: pointer from: aFloat [
 ]
 
 { #category : #'memory access' }
-VMClass >> storeSingleFloatAtPointer: pointer from: aFloat [
+CCGClass >> storeSingleFloatAtPointer: pointer from: aFloat [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and aFloat is a 32-bit single precision float."
 	<doNotGenerate>
@@ -1418,14 +1299,14 @@ VMClass >> storeSingleFloatAtPointer: pointer from: aFloat [
 ]
 
 { #category : #'C library simulation' }
-VMClass >> strcat: aString _: bString [
+CCGClass >> strcat: aString _: bString [
 	<doNotGenerate>
 	"implementation of strcat(3)"
 	^(self asString: aString), (self asString: bString)
 ]
 
 { #category : #'C library extensions' }
-VMClass >> stretch: s1 cat: s2 [
+CCGClass >> stretch: s1 cat: s2 [
 	<var: 's1' type: #'char *'>
 	<var: 's2' type: #'char *'>
 	| ns |
@@ -1439,7 +1320,7 @@ VMClass >> stretch: s1 cat: s2 [
 ]
 
 { #category : #'C library simulation' }
-VMClass >> strlen: aCString [
+CCGClass >> strlen: aCString [
 	"Simulate strlen(3)"
 	<doNotGenerate>
 	| len |
@@ -1464,7 +1345,7 @@ VMClass >> strlen: aCString [
 ]
 
 { #category : #'C library simulation' }
-VMClass >> strncmp: aString _: bString _: n [
+CCGClass >> strncmp: aString _: bString _: n [
 	<doNotGenerate>
 	"implementation of strncmp(3)"
 	bString isString
@@ -1482,7 +1363,7 @@ VMClass >> strncmp: aString _: bString _: n [
 ]
 
 { #category : #'C library simulation' }
-VMClass >> strncpy: dest _: src _: n [
+CCGClass >> strncpy: dest _: src _: n [
 	<doNotGenerate>
 	"implementation of strncpy(3).
 	 See e.g. https://manpages.debian.org/stretch/manpages-dev/strncpy.3.en.html
@@ -1525,7 +1406,7 @@ VMClass >> strncpy: dest _: src _: n [
 ]
 
 { #category : #'hack compatibility' }
-VMClass >> uiProcess [
+CCGClass >> uiProcess [
 	<doNotGenerate>
 	^(Smalltalk classNamed: #Project)
 		ifNotNil: [:project| Project uiProcess] "Squeak"
@@ -1533,7 +1414,7 @@ VMClass >> uiProcess [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint16AtPointer: pointer [
+CCGClass >> uint16AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1542,7 +1423,7 @@ VMClass >> uint16AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint16AtPointer: pointer put: value [
+CCGClass >> uint16AtPointer: pointer put: value [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1551,7 +1432,7 @@ VMClass >> uint16AtPointer: pointer put: value [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint32AtPointer: pointer [
+CCGClass >> uint32AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 32 bit integer."
 	<doNotGenerate>
@@ -1560,7 +1441,7 @@ VMClass >> uint32AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint32AtPointer: pointer put: value [
+CCGClass >> uint32AtPointer: pointer put: value [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 32 bit integer."
 	<doNotGenerate>
@@ -1569,7 +1450,7 @@ VMClass >> uint32AtPointer: pointer put: value [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint64AtPointer: pointer [
+CCGClass >> uint64AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is the width of a machine word."
 	<doNotGenerate>
@@ -1578,7 +1459,7 @@ VMClass >> uint64AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint64AtPointer: pointer put: longValue [
+CCGClass >> uint64AtPointer: pointer put: longValue [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and longValue is the width of a machine word."
 	<doNotGenerate>
@@ -1587,7 +1468,7 @@ VMClass >> uint64AtPointer: pointer put: longValue [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint8AtPointer: pointer [
+CCGClass >> uint8AtPointer: pointer [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1596,7 +1477,7 @@ VMClass >> uint8AtPointer: pointer [
 ]
 
 { #category : #'memory access' }
-VMClass >> uint8AtPointer: pointer put: value [
+CCGClass >> uint8AtPointer: pointer put: value [
 	"This gets implemented by Macros in C, where its types will also be checked.
 	 pointer is a raw address, and the result is an 16 bit integer."
 	<doNotGenerate>
@@ -1605,18 +1486,18 @@ VMClass >> uint8AtPointer: pointer put: value [
 ]
 
 { #category : #simulation }
-VMClass >> unalignedAccessError [
+CCGClass >> unalignedAccessError [
 	^self error: 'unaligned access'
 ]
 
 { #category : #'debug support' }
-VMClass >> unreachable [
+CCGClass >> unreachable [
 	<inline: true>
 	self error: 'UNREACHABLE'
 ]
 
 { #category : #'hack compatibility' }
-VMClass >> vmPath [
+CCGClass >> vmPath [
 	<doNotGenerate>
 	^(Smalltalk classNamed: #VirtualMachine)
 		ifNotNil: [:project| Smalltalk vm path] "Squeak"
@@ -1624,7 +1505,7 @@ VMClass >> vmPath [
 ]
 
 { #category : #'hack compatibility' }
-VMClass >> vmPathSize [
+CCGClass >> vmPathSize [
 	<doNotGenerate>
 	^self vmPath size
 ]

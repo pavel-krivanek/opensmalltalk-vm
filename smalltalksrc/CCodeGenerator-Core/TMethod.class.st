@@ -755,7 +755,7 @@ TMethod >> exitVar: exitVar label: exitLabel [
 	"Conceivably one might ^self from a struct class and mean it.  In most cases though
 	 ^self means `get me outta here, fast'.  So unless this method is from a VMStruct class,
 	 elide any ^self's"
-	eliminateReturnSelfs := ((definingClass inheritsFrom: VMClass) and: [definingClass isStructClass]) not
+	eliminateReturnSelfs := ((definingClass inheritsFrom: CCGClass) and: [definingClass isStructClass]) not
 							  and: [returnType = #void or: [returnType = #sqInt]].
 	parseTree nodesDo:
 		[:node | | replacement |
